@@ -8,4 +8,4 @@ class Network_ {
         void handle();
 };
 
-extern Network_ Network;
+extern Network_ TranceNetwork;

@@ -9,22 +9,23 @@ enum SettingType {
 };
 
 struct Setting {
-    String name;
+    const char* name;
     SettingType type;
     String value;
 
-    Setting(String name, SettingType type, String value)
+    Setting(const char* name, SettingType type, String value)
         : name(name), type(type), value(value) {}
 };
 
 struct Section {
-    String name;
-    void (*callback)(Section*);
+    const char* name;
+    void (*callback)();
+    int settings_count;
     
     Setting* settings;
 
-    Section(String name, void (*callback)(Section*), Setting* settings)
-        : name(name), callback(callback), settings(settings) {}
+    Section(const char* name, void (*callback)(), int settings_count, Setting* settings)
+        : name(name), callback(callback), settings_count(settings_count), settings(settings) {}
 };
 
 
@@ -39,4 +40,4 @@ class Configuration_ {
         Section* _sections[32];
 };
 
-extern Configuration_ Configuration;
+extern Configuration_ TranceConf;

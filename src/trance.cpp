@@ -1,15 +1,17 @@
 /*
   Trance.cpp Library for integrating your device with the Trance ecosystem
   License CC0 1.0 Universal
+
+  Dependencies: Preferences v2.1.0,
 */
 
 #include "Arduino.h"
-#include "Trance.h"
+#include <trance.h>
 
-#include <TranceDebug.h>
+#include <trance_debug.h>
 
-#include "Configuration.h"
-#include "Network.h"
+#include <trance_conf.h>
+#include <trance_network.h>
 
 
 void Trance_::begin(int channels, callback_type callback) {
@@ -26,13 +28,13 @@ void Trance_::begin(int channels, callback_type callback) {
 		_callback = callback;
 	} 
 
-  Configuration.begin();
-  Network.begin();
+  TranceNetwork.begin();
+  TranceConf.begin();
 }
 
 void Trance_::handle() {
-  Configuration.handle();
-  Network.handle();
+  TranceNetwork.handle();
+  TranceConf.handle();
 }
 
 Trance_ Trance;
