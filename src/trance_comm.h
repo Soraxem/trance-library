@@ -3,6 +3,8 @@
 
 #include <trance.h>
 
+#include <ESPAsyncE131.h>
+
 class TranceComm_ {
     public:
         TranceComm_() {};
