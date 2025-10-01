@@ -43,6 +43,7 @@ void wifi_settings_callback() {
 
   WiFi.disconnect();
   WiFi.mode(WIFI_STA);
+  //WiFi.setHostname(networkSettings[0].value.c_str());
   WiFi.begin(wifiSettings[0].value, wifiSettings[1].value);
 }
 

@@ -12,6 +12,7 @@
 
 #include <trance_conf.h>
 #include <trance_network.h>
+#include <trance_comm.h>
 
 
 void Trance_::begin(int channels, callback_type callback, int reset_button) {
@@ -23,18 +24,15 @@ void Trance_::begin(int channels, callback_type callback, int reset_button) {
 
   DEBUG_PRINTLN("Trance: debugging enabled!");
 
-  _channels = channels;
-	if (callback) {
-		_callback = callback;
-	} 
-
   TranceNetwork.begin();
   TranceConf.begin(reset_button);
+  TranceComm.begin(callback, channels);
 }
 
 void Trance_::handle() {
   TranceNetwork.handle();
   TranceConf.handle();
+  TranceComm.handle();
 }
 
 Trance_ Trance;
