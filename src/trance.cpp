@@ -2,7 +2,7 @@
   Trance.cpp Library for integrating your device with the Trance ecosystem
   License CC0 1.0 Universal
 
-  Dependencies: Preferences v2.1.0,
+  Dependencies: 
 */
 
 #include "Arduino.h"

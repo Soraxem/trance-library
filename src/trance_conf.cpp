@@ -99,7 +99,7 @@ void Configuration_::handle(){
                             } else {
                                 String section = params.substring(0, params.indexOf("?"));
                                 params = params.substring(section.length() + 1);
-                                DEBUG_PRINTLN("TRANCE CONF: found Section:" + section);
+                                
 
                                 Section* found_section = nullptr;
                                 for (int i = 0; i < 32; i++) {
@@ -109,26 +109,33 @@ void Configuration_::handle(){
                                     }
                                 }
 
-                                preferences.begin(found_section->name);
-                                while (params != "") {
-                                    String param = params.substring(0, params.indexOf("&"));
-                                    params = params.substring(param.length() + 1);
-                                    DEBUG_PRINTLN("TRANCE CONF: found Parameter:" + param);
+                                if (found_section == nullptr) {
+                                    DEBUG_PRINTLN("TRANCE CONF: Section not found: " + section);
 
-                                    String name = param.substring(0, param.indexOf("="));
-                                    String value = param.substring(name.length() + 1);
-                                    DEBUG_PRINTLN("TRANCE CONF: found Name:" + name + " Value:" + value);
+                                } else {
+
+                                    DEBUG_PRINTLN("TRANCE CONF: found Section: " + section);
+                                    preferences.begin(found_section->name);
+                                    while (params != "") {
+                                        String param = params.substring(0, params.indexOf("&"));
+                                        params = params.substring(param.length() + 1);
+                                        DEBUG_PRINTLN("TRANCE CONF: found Parameter:" + param);
+
+                                        String name = param.substring(0, param.indexOf("="));
+                                        String value = param.substring(name.length() + 1);
+                                        DEBUG_PRINTLN("TRANCE CONF: found Name:" + name + " Value:" + value);
                                     
-                                    for (int i = 0; i < found_section->settings_count; i++) {
-                                        if (String(found_section->settings[i].name) == name) {
-                                            found_section->settings[i].value = value;
-                                            preferences.putString(found_section->settings[i].name, value);
+                                        for (int i = 0; i < found_section->settings_count; i++) {
+                                            if (String(found_section->settings[i].name) == name) {
+                                                found_section->settings[i].value = value;
+                                                preferences.putString(found_section->settings[i].name, value);
+                                            }
                                         }
                                     }
-                                }
-                                preferences.end();
+                                    preferences.end();
 
-                                _callback_section = found_section;
+                                    _callback_section = found_section;
+                                }
                             }
 
                             
