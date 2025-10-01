@@ -32,12 +32,16 @@ struct Section {
 class Configuration_ {
     public:
         Configuration_();
-        void begin();
+        void begin(int reset_button);
         void handle();
         void register_section(Section* section);
         void remove_section(Section* section);
     private:
         Section* _sections[32];
+        int _reset_button;
+        int _reset_timer;
+        bool _reset_state;
+        Section* _callback_section;
 };
 
 extern Configuration_ TranceConf;

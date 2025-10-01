@@ -14,7 +14,7 @@
 #include <trance_network.h>
 
 
-void Trance_::begin(int channels, callback_type callback) {
+void Trance_::begin(int channels, callback_type callback, int reset_button) {
 
   #ifdef DEBUG
   Serial.begin(115200);
@@ -29,7 +29,7 @@ void Trance_::begin(int channels, callback_type callback) {
 	} 
 
   TranceNetwork.begin();
-  TranceConf.begin();
+  TranceConf.begin(reset_button);
 }
 
 void Trance_::handle() {

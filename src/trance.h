@@ -20,7 +20,7 @@ class Trance_
 {
   public:
     Trance_() {};
-    void begin(int channels, callback_type callback);
+    void begin(int channels, callback_type callback, int reset_button);
     void handle();
   private:
     int _channels;

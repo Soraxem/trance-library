@@ -20,13 +20,35 @@ Configuration_::Configuration_(){
     }
 }
 
-void Configuration_::begin(){
+void Configuration_::begin(int reset_button){
+    _reset_button = reset_button;
+    pinMode(_reset_button, INPUT_PULLUP);
     server.begin();
 }
 
 void Configuration_::handle(){
+    
+    if (!digitalRead(_reset_button) && !_reset_state) {
+        _reset_timer = millis();
+        _reset_state = true;
+    } else if (!digitalRead(_reset_button) && _reset_state) {
+        if (_reset_timer + 5000 < millis()) {
+            DEBUG_PRINTLN("TRANCE CONF: Resetting configuration!");
+            _reset_state = false;
+            for (int i = 0; i < 32; i++) {
+                if (_sections[i] != nullptr) {
+                    preferences.begin(_sections[i]->name);
+                    preferences.clear();
+                    preferences.end();
+                }
+            }
+            ESP.restart();
+        }
+    } else {
+        _reset_state = false;
+    }
+    
     NetworkClient client = server.accept();
-
     if (client) {
         String currentLine = "";
         while (client.connected()) {
@@ -67,28 +89,27 @@ void Configuration_::handle(){
                     } else {
 
                         if (currentLine.startsWith("GET /")) {
+
+                            DEBUG_PRINTLN("TRANCE CONF: got request: " + currentLine);
+
                             String params = currentLine.substring(5, currentLine.lastIndexOf(" "));
-
-                            String section = params.substring(0, params.indexOf("?"));
-                            params = params.substring(section.length() + 1);
-                            DEBUG_PRINTLN("TRANCE CONF: found Section:" + section);
-
                             
-
-                            Section* found_section = nullptr;
-                            for (int i = 0; i < 32; i++) {
-                                if (_sections[i] != nullptr && String(_sections[i]->name) == section) {
-                                    found_section = _sections[i];
-                                    break;
-                                }
-                            }
-
-                            preferences.begin(found_section->name);
-
-                            if (found_section == nullptr) {
+                            if (params.indexOf("?") == -1) {
                                 DEBUG_PRINTLN("TRANCE CONF: Section not found");
-                                break;
                             } else {
+                                String section = params.substring(0, params.indexOf("?"));
+                                params = params.substring(section.length() + 1);
+                                DEBUG_PRINTLN("TRANCE CONF: found Section:" + section);
+
+                                Section* found_section = nullptr;
+                                for (int i = 0; i < 32; i++) {
+                                    if (_sections[i] != nullptr && String(_sections[i]->name) == section) {
+                                        found_section = _sections[i];
+                                        break;
+                                    }
+                                }
+
+                                preferences.begin(found_section->name);
                                 while (params != "") {
                                     String param = params.substring(0, params.indexOf("&"));
                                     params = params.substring(param.length() + 1);
@@ -105,11 +126,12 @@ void Configuration_::handle(){
                                         }
                                     }
                                 }
+                                preferences.end();
+
+                                _callback_section = found_section;
                             }
 
-                            preferences.end();
-                            found_section->callback();
-
+                            
                         }   
 
                         currentLine = "";
@@ -121,6 +143,12 @@ void Configuration_::handle(){
         }
         client.stop();
     }
+
+    if (_callback_section != nullptr) {
+        _callback_section->callback();
+        _callback_section = nullptr;
+    }
+    
     
 }
 

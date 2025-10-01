@@ -55,6 +55,8 @@ Setting networkSettings[] = {
 
 void network_settings_callback() {
   DEBUG_PRINTLN("Trance Network: Settings changed!");
+
+  WiFi.setHostname(networkSettings[0].value.c_str());
 }
 
 Section NetworkSection("Network", network_settings_callback, 1, networkSettings);
@@ -71,6 +73,7 @@ void Network_::begin() {
   WiFi.onEvent(ap_start, ARDUINO_EVENT_WIFI_AP_START);
 
   WiFi.mode(WIFI_STA);
+  WiFi.setHostname(networkSettings[0].value.c_str());
   WiFi.begin(wifiSettings[0].value, wifiSettings[1].value);
 }
 
