@@ -40,18 +40,82 @@ void Configuration_::handle(){
 
                         client.print("<h1>Trance Configuration</h1>");
 
-                        client.println();
+                        for (int i = 0; i < 32; i++) {
+                            if (_sections[i] != nullptr) {
+                                client.print("<h2>" + String(_sections[i]->name) + "</h2>");
+                                client.print("<form action=\"" +  String(_sections[i]->name) + "\">");
+                                for (int j = 0; j < _sections[i]->settings_count; j++) {
+                                    client.print("<label>" + String(_sections[i]->settings[j].name) + "</label><br>");
+                                    if (_sections[i]->settings[j].type == SettingType::STRING) {
+                                        client.print("<input type=\"text\" name=\"" + String(_sections[i]->settings[j].name) + "\" value=\"" + _sections[i]->settings[j].value + "\"><br>");
+                                    } else if (_sections[i]->settings[j].type == SettingType::INT) {
+                                        client.print("<input type=\"number\" name=\"" + String(_sections[i]->settings[j].name) + "\" value=\"" + _sections[i]->settings[j].value + "\"><br>");
+                                    } else if (_sections[i]->settings[j].type == SettingType::BOOL_CHECK) {
+                                        client.print("<input type=\"checkbox\" name=\"" + String(_sections[i]->settings[j].name) + "\" value=\"" + _sections[i]->settings[j].value + "\"><br>");
+                                    } else if (_sections[i]->settings[j].type == SettingType::BOOL_RADIO) {
+                                        client.print("<input type=\"radio\" name=\"" + String(_sections[i]->settings[j].name) + "\" value=\"" + _sections[i]->settings[j].value + "\"><br>");
+                                    }
+                                }
+                                client.print("<input type=\"submit\" value=\"Submit\">");
+                                client.print("</form>");
+                            }
+                        }
 
+                        client.println();
                         break;
+
                     } else {
+
+                        if (currentLine.startsWith("GET /")) {
+                            String params = currentLine.substring(5, currentLine.lastIndexOf(" "));
+
+                            String section = params.substring(0, params.indexOf("?"));
+                            params = params.substring(section.length() + 1);
+                            DEBUG_PRINTLN("TRANCE CONF: found Section:" + section);
+
+                            
+
+                            Section* found_section = nullptr;
+                            for (int i = 0; i < 32; i++) {
+                                if (_sections[i] != nullptr && String(_sections[i]->name) == section) {
+                                    found_section = _sections[i];
+                                    break;
+                                }
+                            }
+
+                            preferences.begin(found_section->name);
+
+                            if (found_section == nullptr) {
+                                DEBUG_PRINTLN("TRANCE CONF: Section not found");
+                                break;
+                            } else {
+                                while (params != "") {
+                                    String param = params.substring(0, params.indexOf("&"));
+                                    params = params.substring(param.length() + 1);
+                                    DEBUG_PRINTLN("TRANCE CONF: found Parameter:" + param);
+
+                                    String name = param.substring(0, param.indexOf("="));
+                                    String value = param.substring(name.length() + 1);
+                                    DEBUG_PRINTLN("TRANCE CONF: found Name:" + name + " Value:" + value);
+                                    
+                                    for (int i = 0; i < found_section->settings_count; i++) {
+                                        if (String(found_section->settings[i].name) == name) {
+                                            found_section->settings[i].value = value;
+                                            preferences.putString(found_section->settings[i].name, value);
+                                        }
+                                    }
+                                }
+                            }
+
+                            preferences.end();
+                            found_section->callback();
+
+                        }   
+
                         currentLine = "";
                     }
                 } else if (c != '\r') {
                     currentLine += c;
-                }
-
-                if (currentLine.endsWith("GET /LOL")) {
-                    DEBUG_PRINTLN("TRANCE CONF: Received GET /LOL");
                 }
             }
         }
@@ -73,7 +137,7 @@ void Configuration_::register_section(Section* section){
     preferences.end();
 
     // Find first empty slot, and store pointer to section
-    for (int i = 0; i >= 31; i++) {
+    for (int i = 0; i < 32; i++) {
         if (_sections[i] == nullptr) {
             _sections[i] = section;
             break;
@@ -86,7 +150,7 @@ void Configuration_::remove_section(Section* section){
     DEBUG_PRINTLN("TRANCE CONF: Removing section: " + String(section->name));
 
     // Find corresponding section, and remove pointer
-    for (int i = 0; i >= 31; i++) {
+    for (int i = 0; i < 32; i++) {
         if (_sections[i] == section) {
             _sections[i] = nullptr;
             break;

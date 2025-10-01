@@ -9,21 +9,16 @@ Network managing module for the trance firmware
 #include <trance_debug.h>
 
 #include <trance_conf.h>
-#include <DNSServer.h>
+
 #include <WiFi.h>
-
-// Library for connecting to Wifi networks
-//#include <WiFi.h>
-
+#include <DNSServer.h>
 static DNSServer dnsServer;
-
-
 
 // Open a AP when wifi connection is interrupted.
 void wifi_fail(arduino_event_id_t wifi_event, WiFiEventInfo_t wifi_info) {
   DEBUG_PRINTLN("TRANCE NETWORK: Not able to connect, switching to AP STA mode");
   WiFi.softAP("trance-config");
-  WiFi.mode(WIFI_AP_STA);
+  WiFi.mode(WIFI_AP);
 }
 
 // Close AP when connection is successfull
@@ -43,19 +38,33 @@ Setting wifiSettings[] = {
   Setting("PASSWORD", STRING, "1234")
 };
 
-void settings_callback() {
+void wifi_settings_callback() {
   DEBUG_PRINTLN("Trance Wifi: Settings changed!");
 
   WiFi.disconnect();
+  WiFi.mode(WIFI_STA);
   WiFi.begin(wifiSettings[0].value, wifiSettings[1].value);
 }
 
+Section WifiSection("Wifi", wifi_settings_callback, 2, wifiSettings);
 
-Section WifiSection("Wifi", settings_callback, 2, wifiSettings);
+
+Setting networkSettings[] = {
+  Setting("hostname", STRING, "trance"),
+};
+
+void network_settings_callback() {
+  DEBUG_PRINTLN("Trance Network: Settings changed!");
+}
+
+Section NetworkSection("Network", network_settings_callback, 1, networkSettings);
 
 void Network_::begin() {
   // Register wifi configuration settings
   TranceConf.register_section(&WifiSection);
+
+  // Register network configuration settings
+  TranceConf.register_section(&NetworkSection);
 
   WiFi.onEvent(wifi_connected, ARDUINO_EVENT_WIFI_STA_CONNECTED);
   WiFi.onEvent(wifi_fail, ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
