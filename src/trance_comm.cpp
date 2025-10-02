@@ -9,7 +9,7 @@
 
 #include <ESPAsyncE131.h>
 
-ESPAsyncE131 e131(1);
+ESPAsyncE131 e131(8);
 
 void TranceComm_::begin(callback_type callback, int channels) {
 

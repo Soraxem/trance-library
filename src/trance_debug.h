@@ -1,7 +1,7 @@
 
 
 // Comment or uncomment this line to enable/disable debugging
-#define DEBUG
+//#define DEBUG
 // Create macros for serial debugging
 #ifdef DEBUG
   #define DEBUG_PRINT(x)  Serial.print(x)

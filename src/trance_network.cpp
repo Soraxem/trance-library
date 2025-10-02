@@ -18,7 +18,7 @@ static DNSServer dnsServer;
 void wifi_fail(arduino_event_id_t wifi_event, WiFiEventInfo_t wifi_info) {
   DEBUG_PRINTLN("TRANCE NETWORK: Not able to connect, switching to AP STA mode");
   WiFi.softAP("trance-config");
-  WiFi.mode(WIFI_AP);
+  WiFi.mode(WIFI_AP_STA);
 }
 
 // Close AP when connection is successfull
