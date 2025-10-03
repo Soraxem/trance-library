@@ -5,7 +5,7 @@
 #include <trance_debug.h>
 
 #include <trance_conf.h>
-#include <trance.h>
+#include <Trance.h>
 
 #include <ESPAsyncE131.h>
 

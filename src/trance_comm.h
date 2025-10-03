@@ -1,7 +1,7 @@
 
 #include <Arduino.h>
 
-#include <trance.h>
+#include <Trance.h>
 
 #include <ESPAsyncE131.h>
 

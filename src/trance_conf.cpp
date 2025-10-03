@@ -23,6 +23,9 @@ Configuration_::Configuration_(){
 void Configuration_::begin(int reset_button){
     _reset_button = reset_button;
     pinMode(_reset_button, INPUT_PULLUP);
+
+    DEBUG_PRINTLN("TRANCE CONF: Starting configuration server!");
+
     server.begin();
 }
 

@@ -1,16 +1,15 @@
 /*
-  Trance.h Library for integrating your device with the Trance ecosystem
+  Library for integrating your device with the Trance ecosystem
   License CC0 1.0 Universal
+
+  Board Library: esp32 v3.0.4
+  Dependencies: ESP Async E1.31 v1.0.3
+  Author: Samuel Hafen
+  License: CC0 1.0 Universal
 */
 
 #ifndef Trance_h
 #define Trance_h
-
-// ToDo: Add support for Ethernet
-
-#ifndef TRANCE_ETHERNET  
-#define TRANCE_WIFI
-#endif
 
 #include "Arduino.h"
 

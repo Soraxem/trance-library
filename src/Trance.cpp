@@ -1,12 +1,15 @@
 /*
-  Trance.cpp Library for integrating your device with the Trance ecosystem
+  Library for integrating your device with the Trance ecosystem
   License CC0 1.0 Universal
 
-  Dependencies: ESP Async E1.31 v1.0.5,
+  Board Library: esp32 v3.0.4
+  Dependencies: ESP Async E1.31 v1.0.3
+  Author: Samuel Hafen
+  License: CC0 1.0 Universal
 */
 
 #include "Arduino.h"
-#include <trance.h>
+#include <Trance.h>
 
 #include <trance_debug.h>
 
@@ -23,6 +26,7 @@ void Trance_::begin(int channels, callback_type callback, int reset_button) {
   #endif
 
   DEBUG_PRINTLN("Trance: debugging enabled!");
+  DEBUG_PRINTF("Reset reason: %d\n", esp_reset_reason());
 
   TranceNetwork.begin();
   TranceConf.begin(reset_button);
@@ -34,6 +38,7 @@ void Trance_::handle() {
   TranceConf.handle();
   TranceComm.handle();
 }
+
 
 Trance_ Trance;
 
