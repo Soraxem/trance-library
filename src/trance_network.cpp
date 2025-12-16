@@ -17,8 +17,10 @@ static DNSServer dnsServer;
 // Open a AP when wifi connection is interrupted.
 void wifi_fail(arduino_event_id_t wifi_event, WiFiEventInfo_t wifi_info) {
   DEBUG_PRINTLN("TRANCE NETWORK: Not able to connect, switching to AP STA mode");
-  WiFi.softAP("trance-config");
+  WiFi.disconnect(true);
   WiFi.mode(WIFI_AP_STA);
+  WiFi.softAP("trance-config");
+  WiFi.begin(wifiSettings[0].value, wifiSettings[1].value);
 }
 
 // Close AP when connection is successfull
@@ -42,7 +44,7 @@ void wifi_settings_callback() {
   DEBUG_PRINTLN("Trance Wifi: Settings changed!");
 
   WiFi.disconnect();
-  WiFi.mode(WIFI_STA);
+  WiFi.mode(WIFI_AP_STA);
   //WiFi.setHostname(networkSettings[0].value.c_str());
   WiFi.begin(wifiSettings[0].value, wifiSettings[1].value);
 }
