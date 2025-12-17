@@ -14,26 +14,8 @@ Network managing module for the trance firmware
 #include <DNSServer.h>
 static DNSServer dnsServer;
 
-// Open a AP when wifi connection is interrupted.
-void wifi_fail(arduino_event_id_t wifi_event, WiFiEventInfo_t wifi_info) {
-  DEBUG_PRINTLN("TRANCE NETWORK: Not able to connect, switching to AP STA mode");
-  WiFi.disconnect(true);
-  WiFi.mode(WIFI_AP_STA);
-  WiFi.softAP("trance-config");
-  WiFi.begin(wifiSettings[0].value, wifiSettings[1].value);
-}
 
-// Close AP when connection is successfull
-void wifi_connected(arduino_event_id_t wifi_event, WiFiEventInfo_t wifi_info) {
-  DEBUG_PRINTLN("TRANCE NETWORK: Connected to Wifi, siwtching to STA mode");
-  WiFi.mode(WIFI_STA);
-}
 
-void ap_start(arduino_event_id_t wifi_event, WiFiEventInfo_t wifi_info) {
-  DEBUG_PRINTLN("TRANCE NETWORK: Soft AP started, Starting DNS");
-  //DEBUG_PRINTLN("WIFI: Soft AP IP is: %s", WiFi.softAPIP());
-  dnsServer.start(53, "*", WiFi.softAPIP());
-}
 
 Setting wifiSettings[] = {
   Setting("SSID", STRING, "changeme"),
@@ -63,6 +45,30 @@ void network_settings_callback() {
 }
 
 Section NetworkSection("Network", network_settings_callback, 1, networkSettings);
+
+
+// Open a AP when wifi connection is interrupted.
+void wifi_fail(arduino_event_id_t wifi_event, WiFiEventInfo_t wifi_info) {
+  DEBUG_PRINTLN("TRANCE NETWORK: Not able to connect, switching to AP STA mode");
+  WiFi.disconnect(true);
+  WiFi.mode(WIFI_AP_STA);
+  WiFi.softAP("trance-config");
+  WiFi.begin(wifiSettings[0].value, wifiSettings[1].value);
+}
+
+// Close AP when connection is successfull
+void wifi_connected(arduino_event_id_t wifi_event, WiFiEventInfo_t wifi_info) {
+  DEBUG_PRINTLN("TRANCE NETWORK: Connected to Wifi, siwtching to STA mode");
+  WiFi.mode(WIFI_STA);
+}
+
+void ap_start(arduino_event_id_t wifi_event, WiFiEventInfo_t wifi_info) {
+  DEBUG_PRINTLN("TRANCE NETWORK: Soft AP started, Starting DNS");
+  //DEBUG_PRINTLN("WIFI: Soft AP IP is: %s", WiFi.softAPIP());
+  dnsServer.start(53, "*", WiFi.softAPIP());
+}
+
+
 
 void Network_::begin() {
   // Register wifi configuration settings

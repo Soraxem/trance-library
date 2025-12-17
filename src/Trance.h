@@ -12,7 +12,7 @@
 
 #include "Arduino.h"
 
-typedef void (*callback_type)(uint8_t[]);
+typedef void (*callback_type)(const uint8_t[]);
 
 class Trance_
 {
