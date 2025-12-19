@@ -2,7 +2,7 @@
   Library for integrating your device with the Trance ecosystem
 
   Board Library: esp32 v3.0.4
-  Dependencies: ESP Async E1.31 v1.0.3
+  Dependencies: ArtNet v0.9.2
   Author: Samuel Hafen
   License: MIT
 */
@@ -12,7 +12,7 @@
 
 #include "Arduino.h"
 
-typedef void (*callback_type)(const uint8_t[]);
+typedef void (*callback_type)(uint8_t[]);
 
 class Trance_
 {
